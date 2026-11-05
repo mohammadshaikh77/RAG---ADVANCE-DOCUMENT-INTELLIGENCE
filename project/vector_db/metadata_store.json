@@ -1,0 +1,77 @@
+{
+    "transaction_hash": "1b328aba8e3277ce569fc4a65a896262730a460474239f4b062af182845435b7",
+    "chunks": [
+        {
+            "page": 1,
+            "text": "Academic Year:2025-26 SAP ID: 60003240268 DEPARTMENT OF INFORMATION TECHNOLOGY COURSE CODE: DJS23ICH1501 NAME: Mohammad Shaikh COURSE NAME: DevOps Laboratory CLASS: T. Y. B. Tech BATCH: I2-2 ROLL NO: I169 EXPERIMENT NO. 6 CO/LO: Apply DevOps principles to meet software development requirements. AIM: To understand Docker Architecture and Container Life Cycle, install Docker and execute docker commands to manage images and interact with containers. THEORY: Docker Architecture: Docker architecture. Docker uses a client-server architecture. The Docker client talks to the Docker daemon, which does the heavy lifting of building, running, and distributing your Docker containers. The Docker client and daemon can run on the same system, or you can connect a Docker client to a remote Docker daemon."
+        },
+        {
+            "page": 2,
+            "text": "Academic Year:2025-26 SAP ID: 60003240268 Docker Container Lifecycle Management There are different stages when we create a Docker container which is known as Docker Container Lifecycle. Some of the states are: Created: A container that has been created but not started Running: A container running with all its processes Paused: A container whose processes have been paused Stopped: A container whose processes have been stopped Deleted: A container in a dead state"
+        },
+        {
+            "page": 3,
+            "text": "Academic Year:2025-26 SAP ID: 60003240268 Project structure devops-exp6/ \u251c\u2500 app/ \u2502 \u251c\u2500 app.py \u2502 \u2514\u2500 requirements.txt \u251c\u2500 Dockerfile \u251c\u2500 docker-compose.yml \u2514\u2500 lifecycle-demo.sh (bash script to demonstrate lifecycle) app/app.py"
+        },
+        {
+            "page": 4,
+            "text": "Academic Year:2025-26 SAP ID: 60003240268 from flask import Flask, jsonify app = Flask(__name__) @app.route('/') def hello(): return jsonify({\"message\":\"Hello from Flask in Docker!\", \"status\":\"ok\"}) if __name__ == '__main__': # listen on 0.0.0.0 so container external port mapping works app.run(host='0.0.0.0', port=5000) app/requirements.txt Flask==2.2.5 Dockerfile # Use a small Python image FROM python:3.11-slim # Create app dir WORKDIR /app # Copy requirements and install COPY app/requirements.txt . RUN pip install --no-cache-dir -r requirements.txt # Copy application code COPY app/ . # Expose port EXPOSE 5000 # Default command CMD [\"python\", \"app.py\"] docker-compose.yml"
+        },
+        {
+            "page": 5,
+            "text": "Academic Year:2025-26 SAP ID: 60003240268 version: '3.8' services: web: build: . container_name: devops_exp6_web ports: - \"5000:5000\" restart: \"no\" DEMO AUTOMATION SCRIPT (BASH) lifecycle-demo.sh #!/usr/bin/env bash set -e IMAGE=devops-exp6-web:1.0 NAME=lifecycle_demo_demo echo \"1) Creating container (not starting)...\" CID=$(docker create --name $NAME $IMAGE) echo \"Created container: $CID\" docker ps -a --filter \"name=$NAME\" echo echo \"2) Starting container...\" docker start $NAME sleep 1 docker ps --filter \"name=$NAME\" echo echo \"3) Show logs (brief)...\" docker logs --tail 10 $NAME || true echo echo \"4) Pausing container (if supported)...\" if docker pause $NAME 2>/dev/null; then echo \"Paused.\""
+        },
+        {
+            "page": 6,
+            "text": "Academic Year:2025-26 SAP ID: 60003240268 docker inspect -f '{{.State.Status}} Paused={{.State.Paused}}' $NAME sleep 2 docker unpause $NAME echo \"Unpaused.\" else echo \"Pause not supported on this platform.\" fi echo echo \"5) Stop container...\" docker stop $NAME docker ps -a --filter \"name=$NAME\" echo echo \"6) Remove container...\" docker rm $NAME echo \"Removed container.\" echo echo \"7) Optionally remove image (y/N)?\" read -r -p \"> \" REPLY if [[ \"$REPLY\" =~ ^([yY][eE][sS]|[yY])$ ]]; then docker rmi $IMAGE || true echo \"Image removed (if existed).\" else echo \"Image kept.\" fi echo \"Done.\" FINAL NOTES / TROUBLESHOOTING \u2022 If docker pause fails, it\u2019s usually because host is Windows containers or pause unsupported \u2014 use Linux backend / WSL2. \u2022 If docker run reports permission issues on Linux, make sure your user belongs to docker group or prefix commands with sudo."
+        },
+        {
+            "page": 7,
+            "text": "Academic Year:2025-26 SAP ID: 60003240268 \u2022 If port 5000 is already in use, use another host mapping -p 5001:5000. OBSERVATIONS Docker Installation: Docker Engine/Docker Desktop was successfully installed and verified using the docker version and docker run hello-world commands. The test container confirmed that Docker is functioning correctly on the host system. Image Creation: A custom Docker image (devops-exp6-web:1.0) was successfully built using a Dockerfile. The image contained a simple Flask application and was visible in the local repository using docker images. Container Lifecycle Management: \u2022 The docker create command created a container in the Created state without running it. \u2022 Using docker start, the container transitioned to the Running state and the application became accessible at http://localhost:5000/. \u2022 docker pause and docker unpause correctly suspended and resumed container processes (on Linux backend). \u2022 After executing docker stop, the container moved to the Exited/Stopped state. \u2022 The container was removed completely using docker rm, showing the Deleted state in the lifecycle. \u2022 Finally, the custom image was deleted using docker rmi. Resource Usage:"
+        },
+        {
+            "page": 7,
+            "text": "lifecycle. \u2022 Finally, the custom image was deleted using docker rmi. Resource Usage:"
+        },
+        {
+            "page": 8,
+            "text": "Academic Year:2025-26 SAP ID: 60003240268 Commands such as docker stats and docker inspect showed real-time resource utilization and container metadata, confirming Docker\u2019s efficient isolation and lightweight resource footprint. Networking & Port Mapping: The -p 5000:5000 option successfully mapped container ports to the host, enabling browserbased access to the Flask app from the local machine. Consistency & Portability: The same Docker image worked identically on different systems (Windows WSL2 and Linux), demonstrating Docker\u2019s portability and environment consistency. CONCLUSION The experiment successfully demonstrated the Docker architecture and container lifecycle \u2014 from image creation to container removal. It was observed that Docker provides a lightweight and efficient alternative to traditional virtual machines by isolating applications within containers that share the host operating system kernel. This exercise also reinforced understanding of key Docker concepts like images, containers, layers, networking, and port mapping. Overall, Docker proves to be an essential DevOps tool that simplifies application deployment, ensures consistency across environments, and enables scalable, reproducible software delivery."
+        },
+        {
+            "page": 8,
+            "text": "delivery."
+        }
+    ],
+    "images": [
+        {
+            "page": 1,
+            "path": "project/images/page1_img0.png",
+            "type": "embedded",
+            "caption": "Based on the provided image, here is a detailed technical description of the visual asset.\n\n### **Asset Type**\nThis is an institutional letterhead or header template for an academic document. It is not a technical diagram, chart, or flowchart. The image consists of a full header and several cropped, zoomed-in sections of the same header for detail.\n\n---\n\n### **Key Entities & Visual Elements**\n\n1.  **Primary Logo (SVKM):**\n    *   **Description:** A stylized icon representing a student at a desk.\n    *   **Components:**\n        *   A blue silhouette of a person (head and shoulders).\n        *   The person is positioned behind a grey lectern or desk.\n        *   An open book is depicted on the desk.\n        *   The background is a circular field of light-blue horizontal lines.\n        *   The acronym **\"SVKM\"** is written in bold, white, sans-serif font on the front of the grey desk.\n\n2.  **Secondary Emblem (College Crest):**\n    *   **Description:** A traditional academic crest or seal.\n    *   **Components:**\n        *   **Outer Ring:** A blue circular band with white text.\n            *   Top text: `SHRI VILE PARLE KELAVANI MANDAL'S`\n            *   Bottom text: `DWARKADAS J. SANGHVI COLLEGE OF ENGINE"
+        },
+        {
+            "page": 2,
+            "path": "project/images/page2_img1.png",
+            "type": "embedded",
+            "caption": "Based on the provided technical diagram, here is a detailed description of its components, relationships, and flow.\n\n### **Overview**\nThe diagram illustrates the interaction between a Docker client, a Docker host, and a Docker registry. It visualizes the lifecycle of a Docker image, specifically the `build`, `pull`, and `run` operations, and how they relate to the storage of images and the execution of containers.\n\n### **Key Entities**\n\nThe diagram is organized into three main entities, represented by large, light-green rounded rectangles:\n\n1.  **Client**: Represents the user's interface or command-line tool for interacting with Docker.\n    *   **Components**:\n        *   `Docker build`: The command to create an image from a Dockerfile.\n        *   `Docker pull`: The command to download an image from a registry.\n        *   `Docker run`: The command to create and start a container from an image.\n\n2.  **Docker host**: The machine (physical or virtual) where the Docker Engine is installed and running.\n    *   **Components**:\n        *   `Docker Daemon`: The background process (`dockerd`) that manages Docker objects and responds to API requests.\n        *   `Containers`: The runtime instances of images. Depicted as two server-like icons.\n        *   `Images`: The read-only templates used to create containers.\n            *   `Ubuntu`:"
+        },
+        {
+            "page": 3,
+            "path": "project/images/page3_img1.png",
+            "type": "embedded",
+            "caption": "Based on the provided images, here is a detailed technical description of the visual asset.\n\n### **Asset Type**\nThis is a **State Machine Diagram** (or State Transition Diagram), which models the lifecycle of a process, task, or object.\n\n### **Key Entities (States)**\nThe diagram defines five distinct states, each represented by a colored circle:\n*   **Created**: The initial state of the entity. (Light Green)\n*   **Running**: The active state where the entity is executing. (Cyan)\n*   **Paused**: A temporary suspension of the active state. (Orange)\n*   **Stopped**: A non-active state from which the entity can be restarted. (Pink/Magenta)\n*   **Deleted**: The final, terminal state of the entity. (Gray)\n\n### **Relationships and Flow Steps (Transitions)**\nThe arrows represent transitions between states, triggered by specific events or commands. The labels on the arrows are the triggers.\n\n1.  **`create`**: Transitions an entity from an implicit \"non-existent\" state to the **Created** state.\n2.  **`start`**: Transitions an entity from the **Created** state to the **Running** state.\n3.  **`run`**: An external command that also transitions an entity to the **Running** state. This suggests an entity can be put into a running state from other conditions not fully detailed ("
+        },
+        {
+            "page": 4,
+            "path": "project/images/page4_render.png",
+            "type": "rendered_page",
+            "caption": "# Technical Document: Flask Application Dockerization\n\n## Document Metadata\n- **Institution:** Shri Vile Parle Kelavani Mandal's D.WARKADAS J. SANGHVI COLLEGE OF ENGINEERING (Autonomous College Affiliated to the University of Mumbai)\n- **Accreditation:** NAAC Accredited with \"A\" Grade (CGPA: 3.18)\n- **Academic Year:** 2025-26\n- **SAP ID:** 60003240268\n- **Logo:** SVKM emblem (top-left) and institutional crest (top-right)\n\n---\n\n## Code Block 1: `app.py` (Flask Application)\n\n```python\nfrom flask import Flask, jsonify\napp = Flask(__name__)\n\n@app.route('/')\ndef hello():\n    return jsonify({\"message\":\"Hello from Flask in Docker!\", \"status\":\"ok\"})\n\nif __name__ == '__main__':\n    # listen on 0.0.0.0 so container-external port mapping works\n    app.run(host='0.0.0.0', port=5000)\n```\n\n**Key Entities & Relationships:**\n- **Framework:** Flask (Python web framework)\n- **Imports:** `Flask`, `jsonify` from `flask`\n- **App Instance:** `app = Flask(__name__)`"
+        },
+        {
+            "page": 5,
+            "path": "project/images/page5_render.png",
+            "type": "rendered_page",
+            "caption": "Based on the provided images, here is a detailed technical description of the visual assets.\n\nThe images display excerpts from a technical document, likely a lab manual or assignment sheet, from **Dwarkadas J. Sanghvi College of Engineering**. The content focuses on DevOps practices, specifically Docker container management.\n\n### **1. Header Information**\n*   **Institution:** Shri Vile Parle Kelavani Mandal's Dwarkadas J. Sanghvi College of Engineering.\n*   **Affiliation/Accreditation:** Autonomous College Affiliated to the University of Mumbai; NAAC Accredited with \"A\" Grade (CGPA: 3.18).\n*   **Academic Year:** 2025-26.\n*   **Student ID (SAP ID):** 60003240268.\n*   **Logos:** Two institutional logos are present: one for SVKM (Shri Vile Parle Kelavani Mandal) and another for the college itself.\n\n---\n\n### **2. Technical Content: Docker Compose Configuration**\nA snippet of a `docker-compose.yml` file is shown. This file defines a multi-container application stack.\n\n*   **`version: '3.8'`**: Specifies the version of the Compose file format.\n*   **`services:`**: Defines the services (containers) to be run."
+        }
+    ]
+}
